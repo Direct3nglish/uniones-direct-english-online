@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Datos de Grupos</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h2 {
+            margin-top: 50px; /* Espacio para el formulario */
+        }
+        label {
+            font-weight: bold;
+        }
+        input[type="text"], select, textarea, input[type="date"] {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            resize: vertical;
+        }
+        input[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .excel-link {
+            margin-top: 20px;
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: bold;
+            display: inline-block;
+        }
+        .excel-link:hover {
+            background-color: #45a049;
+        }
+        /* Estilos para el botón de estado */
+        .estado-button {
+            display: inline-block;
+            background-color: orange;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            text-align: center;
+            text-decoration: none;
+            font-size: 14px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        .estado-button.finished {
+            background-color: green;
+        }
+        /* Estilos para los botones de eliminar y restaurar */
+        .delete-button, .restore-button {
+            padding: 4px 8px;
+            margin-left: 5px;
+            cursor: pointer;
+            background-color: #f44336;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+        .restore-button {
+            background-color: #4CAF50;
+        }
+        /* Estilos para las opciones condicionales */
+        .conditional-options {
+            display: none;
+            margin-top: 10px;
+        }
+        .conditional-options.active {
+            display: block;
+        }
+        .sub-option {
+            border: 1px solid #ccc;
+            padding: 8px;
+            margin-top: 5px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <h2>Registro de Datos de Grupos</h2>
+    <form id="grupoForm">
+        <label for="grupo">N° Grupo:</label>
+        <input type="text" id="grupo" name="grupo" required>
+
+        <label for="nivel">Nivel del Grupo:</label>
+        <select id="nivel" name="nivel" required>
+            <option value="B1">B1</option>
+            <option value="B2">B2</option>
+            <option value="B3">B3</option>
+            <option value="B4">B4</option>
+            <option value="PRE INTERMEDIO">PRE INTERMEDIO</option>
+            <option value="INTERMEDIO">INTERMEDIO</option>
+            <option value="AVANZADO">AVANZADO</option>
+            <option value="BÁSICO INICIO">BÁSICO INICIO</option>
+        </select>
+
+        <label for="horario">Horario del Grupo:</label>
+        <input type="text" id="horario" name="horario" required>
+
+        <label for="coach">Coach del Grupo:</label>
+        <input type="text" id="coach" name="coach" required>
+
+        <label for="detalle">Detalle de la Unión:</label>
+        <textarea id="detalle" name="detalle" rows="4" required></textarea>
+
+        <label for="clase_dividira">¿Clase se dividirá?</label>
+        <select id="clase_dividira" name="clase_dividira" onchange="toggleConditionalOptions()">
+            <option value="si">SI</option>
+            <option value="no">NO</option>
+        </select>
+
+        <div id="dividira_options" class="conditional-options">
+            <div class="sub-option">
+                <label for="grupo_envio">Grupo a dónde se enviarán alumnos:</label>
+                <input type="text" id="grupo_envio" name="grupo_envio">
+            </div>
+            <div class="sub-option">
+                <label for="numero_alumnos">Número de alumnos:</label>
+                <input type="text" id="numero_alumnos" name="numero_alumnos">
+            </div>
+        </div>
+
+        <label for="clase_rellenara">¿Clase se rellenará?</label>
+        <select id="clase_rellenara" name="clase_rellenara" onchange="toggleFillOptions()">
+            <option value="si">SI</option>
+            <option value="no">NO</option>
+        </select>
+
+        <div id="rellenara_options" class="conditional-options">
+            <div class="sub-option">
+                <label for="clase_origen">Clase de la cuál provienen alumnos:</label>
+                <input type="text" id="clase_origen" name="clase_origen">
+            </div>
+        </div>
+
+        <label for="anuncio">Anuncio (Académico):</label>
+        <select id="anuncio" name="anuncio" required>
+            <option value="WILLIAM CORTEZ">WILLIAM CORTEZ</option>
+            <option value="ALEXA FLORES">ALEXA FLORES</option>
+            <option value="CRISTIAN HERRERA">CRISTIAN HERRERA</option>
+        </select>
+
+        <label for="fecha_anuncio">Fecha de Anuncio:</label>
+        <select id="fecha_anuncio" name="fecha_anuncio" required>
+            <option value="JUEVES POR LA TARDE">JUEVES POR LA TARDE</option>
+            <option value="VIERNES POR LA MAÑANA">VIERNES POR LA MAÑANA</option>
+            <option value="VIERNES POR LA TARDE">VIERNES POR LA TARDE</option>
+            <option value="SÁBADO POR LA MAÑANA">SÁBADO POR LA MAÑANA</option>
+            <option value="SÁBADO POR LA TARDE">SÁBADO POR LA TARDE</option>
+            <option value="DOMINGO POR LA MAÑANA">DOMINGO POR LA MAÑANA</option>
+        </select>
+
+        <label for="comentarios">Comentarios:</label>
+        <textarea id="comentarios" name="comentarios" rows="4"></textarea>
+
+        <label for="estado_union">Estado de la Unión:</label>
+        <select id="estado_union" name="estado_union">
+            <option value="activo">Activo</option>
+            <option value="inactivo">Inactivo</option>
+        </select>
+
+        <!-- Botón para cambiar estado -->
+        <button type="button" id="estadoButton" class="estado-button">Pendiente</button>
+
+        <input type="submit" value="Guardar datos">
+    </form>
+
+    <h2>Tabla de Datos de Grupos</h2>
+    <table id="grupoTable">
+        <thead>
+            <tr>
+                <th>N° Grupo</th>
+                <th>Horario</th>
+                <th>Nivel</th>
+                <th>Coach</th>
+                <th>Detalle Unión</th>
+                <th>¿Clase se dividirá?</th>
+                <th>Grupo envío de alumnos</th>
+                <th>Número de alumnos</th>
+                <th>¿Clase se rellenará?</th>
+                <th>Clase de la cuál provienen alumnos</th>
+                <th>Anuncio</th>
+                <th>Fecha de Anuncio</th>
+                <th>Comentarios</th>
+                <th>Estado Unión</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody id="grupoTableBody">
+            <!-- Aquí se añadirán las filas dinámicamente -->
+        </tbody>
+    </table>
+
+    <a class="excel-link" id="exportExcel" href="#">Descargar Excel</a>
+
+    <script>
+        // Función para capturar el evento de envío del formulario
+        document.getElementById('grupoForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevenir el envío del formulario por defecto
+
+            // Obtener los valores del formulario
+            var grupo = document.getElementById('grupo').value;
+            var nivel = document.getElementById('nivel').value;
+            var horario = document.getElementById('horario').value;
+            var coach = document.getElementById('coach').value;
+            var detalle = document.getElementById('detalle').value;
+            var clase_dividira = document.getElementById('clase_dividira').value;
+            var grupo_envio = document.getElementById('grupo_envio').value;
+            var numero_alumnos = document.getElementById('numero_alumnos').value;
+            var clase_rellenara = document.getElementById('clase_rellenara').value;
+            var clase_origen = document.getElementById('clase_origen').value;
+            var anuncio = document.getElementById('anuncio').value;
+            var fecha_anuncio = document.getElementById('fecha_anuncio').value;
+            var comentarios = document.getElementById('comentarios').value;
+            var estado_union = document.getElementById('estado_union').value;
+
+            // Crear una nueva fila en la tabla
+            var tableRef = document.getElementById('grupoTableBody');
+            var newRow = tableRef.insertRow();
+
+            // Insertar celdas en la nueva fila
+            var newCell;
+            newCell = newRow.insertCell();
+            newCell.textContent = grupo;
+            newCell = newRow.insertCell();
+            newCell.textContent = horario;
+            newCell = newRow.insertCell();
+            newCell.textContent = nivel;
+            newCell = newRow.insertCell();
+            newCell.textContent = coach;
+            newCell = newRow.insertCell();
+            newCell.textContent = detalle;
+            newCell = newRow.insertCell();
+            newCell.textContent = clase_dividira;
+            newCell = newRow.insertCell();
+            newCell.textContent = grupo_envio;
+            newCell = newRow.insertCell();
+            newCell.textContent = numero_alumnos;
+            newCell = newRow.insertCell();
+            newCell.textContent = clase_rellenara;
+            newCell = newRow.insertCell();
+            newCell.textContent = clase_origen;
+            newCell = newRow.insertCell();
+            newCell.textContent = anuncio;
+            newCell = newRow.insertCell();
+            newCell.textContent = fecha_anuncio;
+            newCell = newRow.insertCell();
+            newCell.textContent = comentarios;
+            newCell = newRow.insertCell();
+            newCell.textContent = estado_union;
+            newCell = newRow.insertCell(); // Celda para los botones de acciones
+
+            // Botón para eliminar
+            var deleteButton = document.createElement('button');
+            deleteButton.textContent = 'Eliminar';
+            deleteButton.classList.add('delete-button');
+            deleteButton.addEventListener('click', function() {
+                var row = this.parentNode.parentNode;
+                row.parentNode.removeChild(row);
+            });
+            newCell.appendChild(deleteButton);
+
+            // Botón para restaurar
+            var restoreButton = document.createElement('button');
+            restoreButton.textContent = 'Restaurar';
+            restoreButton.classList.add('restore-button');
+            restoreButton.style.display = 'none'; // Inicialmente oculto
+            restoreButton.addEventListener('click', function() {
+                var row = this.parentNode.parentNode;
+                tableRef.insertBefore(row, tableRef.firstChild); // Insertar al inicio
+                this.style.display = 'none'; // Ocultar botón de restaurar
+            });
+            newCell.appendChild(restoreButton);
+
+            // Limpiar el formulario después de agregar los datos a la tabla
+            document.getElementById('grupoForm').reset();
+        });
+
+        // Función para cambiar las opciones condicionales
+        function toggleConditionalOptions() {
+            var claseDividira = document.getElementById('clase_dividira').value;
+            var dividiraOptions = document.getElementById('dividira_options');
+
+            if (claseDividira === 'si') {
+                dividiraOptions.classList.add('active');
+            } else {
+                dividiraOptions.classList.remove('active');
+            }
+        }
+
+        // Función para cambiar las opciones de relleno
+        function toggleFillOptions() {
+            var claseRellenara = document.getElementById('clase_rellenara').value;
+            var rellenaraOptions = document.getElementById('rellenara_options');
+
+            if (claseRellenara === 'si') {
+                rellenaraOptions.classList.add('active');
+            } else {
+                rellenaraOptions.classList.remove('active');
+            }
+        }
+
+        // Función para cambiar el estado entre Pendiente y Finalizado
+        var estadoButton = document.getElementById('estadoButton');
+        var estadoUnionSelect = document.getElementById('estado_union');
+        
+        estadoButton.addEventListener('click', function() {
+            if (estadoUnionSelect.value === 'activo') {
+                estadoUnionSelect.value = 'inactivo';
+                estadoButton.textContent = 'Finalizado';
+                estadoButton.classList.remove('finished');
+                estadoButton.classList.add('estado-button');
+            } else {
+                estadoUnionSelect.value = 'activo';
+                estadoButton.textContent = 'Pendiente';
+                estadoButton.classList.remove('estado-button');
+                estadoButton.classList.add('finished');
+            }
+        });
+
+        // Función para exportar a Excel
+        document.getElementById('exportExcel').addEventListener('click', function() {
+            var table = document.getElementById('grupoTable');
+            var html = table.outerHTML;
+            var url = 'data:application/vnd.ms-excel;base64,' + base64Encode(html);
+            this.href = url;
+            this.download = 'datos_grupos.xls';
+        });
+
+        // Función para codificar a base64
+        function base64Encode(s) {
+            return window.btoa(unescape(encodeURIComponent(s)));
+        }
+    </script>
+</body>
+</html>
